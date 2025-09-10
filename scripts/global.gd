@@ -19,6 +19,7 @@ var score = {
 func score_goal(ball: Node2D, player: Player):
 	goal_scored.emit(ball, player)
 
+
 func reset_score():
 	score[Player.RIGHT] = 0
 	score[Player.LEFT] = 0

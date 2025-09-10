@@ -31,7 +31,7 @@ func _ready():
 
 func _on_score_changed():
 	set_players_scores(Global.score[Global.Player.LEFT], Global.score[Global.Player.RIGHT])
- 
+
 
 func _set_font_size(new_font_size: float):
 	font_size = new_font_size

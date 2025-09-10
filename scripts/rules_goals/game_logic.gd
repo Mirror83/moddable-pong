@@ -1,6 +1,8 @@
 class_name GameLogic
 extends Node
 
+signal game_over(player_scored_against: Global.Player)
+
 @export_group("Initial score")
 
 ## Starting score of the left side player
@@ -71,20 +73,21 @@ extends Node
 
 var _last_player_scored: Global.Player = Global.Player.LEFT
 
-signal game_over(player_scored_against: Global.Player);
 
 func reset_game():
 	Global.reset_score()
 	for ball in get_tree().get_nodes_in_group("balls"):
 		ball.queue_free()
-		
+
 	_spawn_balls()
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Global.goal_scored.connect(_on_goal_scored)
 	await Global.hud_added
 	reset_game()
+
 
 func _spawn_balls(player: Global.Player = Global.Player.LEFT):
 	for spawner in get_tree().get_nodes_in_group("ball spawners"):
@@ -149,11 +152,11 @@ func _on_goal_scored(ball: Node2D, player: Global.Player):
 			Global.add_score(left_goal_scoring_player, left_goal_points)
 		elif score_on_right_goal_reached and player == Global.Player.RIGHT:
 			Global.add_score(right_goal_scoring_player, right_goal_points)
-		
+
 	var spawner = ball.get_meta("spawner")
 	ball.queue_free()
 	if spawner != null:
 		_spawn_ball(spawner, player)
-		
+
 	if end_on_first_goal_reached:
 		game_over.emit(player)

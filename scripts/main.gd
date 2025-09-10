@@ -1,5 +1,6 @@
 extends Node
 
+
 func _ready() -> void:
 	get_tree().paused = true
 	process_mode = Node.PROCESS_MODE_ALWAYS

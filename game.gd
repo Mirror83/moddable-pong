@@ -1,5 +1,6 @@
 extends Node2D
 
+
 func _ready() -> void:
 	get_tree().paused = true
 	$GameOver.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -18,7 +19,7 @@ func _on_game_over(player_scored_against: Global.Player) -> void:
 		message = "Player two wins!"
 	else:
 		message = "Player one wins!"
-		
+
 	$GameOver.set_message(message)
 	get_tree().paused = true
 
