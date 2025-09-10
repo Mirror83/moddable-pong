@@ -20,3 +20,4 @@ The modifications I have made include:
 - Setting the ball velocity multiplier to 1.1 so that the ball gets a bit faster every time it hits a paddle.
 - Changing the default background and paddle colours
 - Adding start and game over screens
+- Ending the game after a particular score is reached

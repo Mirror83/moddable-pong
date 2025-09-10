@@ -63,6 +63,10 @@ signal game_over(player_scored_against: Global.Player)
 ## End the game when a ball touches an obstacle?
 @export var end_on_first_obstacle_reached: bool = false
 
+@export var end_after_certain_score_reached: bool = false
+
+@export_range(2, 10) var game_ending_score: int = 3
+
 @export_group("Ball Properties")
 
 ## The ball velocity will be multiplied by this number each time it bounces on a paddle.
@@ -160,3 +164,11 @@ func _on_goal_scored(ball: Node2D, player: Global.Player):
 
 	if end_on_first_goal_reached:
 		game_over.emit(player)
+		return
+
+	if end_after_certain_score_reached:
+		if (
+			Global.score[Global.Player.LEFT] >= game_ending_score
+			or Global.score[Global.Player.RIGHT] >= game_ending_score
+		):
+			game_over.emit(player)
