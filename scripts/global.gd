@@ -23,6 +23,7 @@ func score_goal(ball: Node2D, player: Player):
 func reset_score():
 	score[Player.RIGHT] = 0
 	score[Player.LEFT] = 0
+	score_changed.emit()
 
 
 func add_score(player: Player, value: int):
