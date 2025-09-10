@@ -1,0 +1,160 @@
+[gd_scene load_steps=16 format=3 uid="uid://bel3lwsvc2uc3"]
+
+[ext_resource type="Script" uid="uid://cjp374r68d6bj" path="res://game.gd" id="1_vef74"]
+[ext_resource type="PackedScene" uid="uid://s7enbp56f256" path="res://components/paddles/basic_paddle.tscn" id="1_xxpg5"]
+[ext_resource type="Texture2D" uid="uid://dxytd3rf2p34r" path="res://assets/textures/spaces/void.png" id="2_272bh"]
+[ext_resource type="PackedScene" uid="uid://cg1m4evi8c35o" path="res://components/other/spawner.tscn" id="3_spct4"]
+[ext_resource type="PackedScene" uid="uid://bn368pidqsqgs" path="res://rules_goals/game_logic.tscn" id="3_umelw"]
+[ext_resource type="PackedScene" uid="uid://bis7afjjuwypq" path="res://hud.tscn" id="4_4868o"]
+[ext_resource type="PackedScene" uid="uid://cg8ibi18um3vg" path="res://spaces/basic_space.tscn" id="4_nvjpm"]
+[ext_resource type="PackedScene" uid="uid://c7l70grmkauij" path="res://components/balls/basic_ball.tscn" id="4_rffv2"]
+[ext_resource type="Shader" uid="uid://ducjajch57d81" path="res://blur.gdshader" id="8_j5wjh"]
+[ext_resource type="Script" uid="uid://cyryqobw513qe" path="res://game_over.gd" id="10_hve3p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_guyqd"]
+size = Vector2(10, 1080)
+
+[sub_resource type="SystemFont" id="SystemFont_24cl0"]
+subpixel_positioning = 0
+
+[sub_resource type="Shader" id="Shader_0xm2m"]
+code = "shader_type canvas_item;
+
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
+
+void fragment() {
+    COLOR = textureLod(screen_texture, SCREEN_UV, 3.0);
+}
+
+//void light() {
+//	// Called for every pixel for every light affecting the CanvasItem.
+//	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vef74"]
+shader = SubResource("Shader_0xm2m")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hve3p"]
+shader = ExtResource("8_j5wjh")
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_vef74")
+metadata/_edit_vertical_guides_ = [-933.0]
+
+[node name="BasicSpace" parent="." instance=ExtResource("4_nvjpm")]
+background_texture = ExtResource("2_272bh")
+
+[node name="BasicPaddleLeft" parent="." instance=ExtResource("1_xxpg5")]
+position = Vector2(64, 512)
+tint = Color(0.8, 0.8, 0.8, 1)
+
+[node name="BasicPaddleRight" parent="." instance=ExtResource("1_xxpg5")]
+position = Vector2(1856, 512)
+player = 1
+tint = Color(0.8, 0.8, 0.8, 1)
+
+[node name="BallSpawner" parent="." groups=["ball spawners"] instance=ExtResource("3_spct4")]
+position = Vector2(967, 530)
+spawn_area = SubResource("RectangleShape2D_guyqd")
+life_time = 0.0
+
+[node name="BasicBall" parent="BallSpawner" instance=ExtResource("4_rffv2")]
+linear_velocity = Vector2(353.553, 353.553)
+tint = Color(0.509804, 0.360784, 0.972549, 1)
+
+[node name="GameLogic" parent="." instance=ExtResource("3_umelw")]
+end_on_first_goal_reached = true
+ball_velocity_multiplier = 1.1
+
+[node name="HUD" parent="." instance=ExtResource("4_4868o")]
+font = SubResource("SystemFont_24cl0")
+
+[node name="Start" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Control" type="Control" parent="Start"]
+material = SubResource("ShaderMaterial_vef74")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="ColorRect" parent="Start/Control"]
+material = SubResource("ShaderMaterial_hve3p")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="HBoxContainer" type="VBoxContainer" parent="Start/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Start/Control/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 60
+bbcode_enabled = true
+text = "Moddable Pong"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="StartButton" type="Button" parent="Start/Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "Start"
+
+[node name="GameOver" type="CanvasLayer" parent="."]
+layer = 2
+visible = false
+script = ExtResource("10_hve3p")
+
+[node name="Control" type="Control" parent="GameOver"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="ColorRect" parent="GameOver/Control"]
+material = SubResource("ShaderMaterial_hve3p")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="HBoxContainer" type="VBoxContainer" parent="GameOver/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GameOver/Control/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 60
+bbcode_enabled = true
+text = "Game Over"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameOver/Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "Restart"
+
+[connection signal="game_over" from="GameLogic" to="." method="_on_game_over"]
+[connection signal="pressed" from="Start/Control/HBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="GameOver/Control/HBoxContainer/RestartButton" to="." method="_on_restart_button_pressed"]
